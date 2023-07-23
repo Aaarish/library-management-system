@@ -14,6 +14,7 @@ import java.util.List;
 @Table(name = "member_profiles")
 public class MemberProfile {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long memberProfileId;
 
     @OneToOne
