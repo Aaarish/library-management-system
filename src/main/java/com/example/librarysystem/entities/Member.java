@@ -17,7 +17,7 @@ public class Member {
     private String memberName;
     private String memberContactNumber;
 
-    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private MemberProfile memberProfile;
 
 }
