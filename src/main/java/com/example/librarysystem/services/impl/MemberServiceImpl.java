@@ -3,6 +3,7 @@ package com.example.librarysystem.services.impl;
 import com.example.librarysystem.dao.MemberDao;
 import com.example.librarysystem.dto.MemberDto;
 import com.example.librarysystem.entities.Member;
+import com.example.librarysystem.entities.MemberProfile;
 import com.example.librarysystem.services.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;

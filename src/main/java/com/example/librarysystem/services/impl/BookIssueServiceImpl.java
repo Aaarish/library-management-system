@@ -3,6 +3,7 @@ package com.example.librarysystem.services.impl;
 import com.example.librarysystem.dao.BookDao;
 import com.example.librarysystem.dao.IssuedItemDao;
 import com.example.librarysystem.dao.MemberDao;
+import com.example.librarysystem.dao.MemberProfileDao;
 import com.example.librarysystem.entities.Book;
 import com.example.librarysystem.entities.IssuedItem;
 import com.example.librarysystem.entities.Member;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Slf4j
@@ -24,6 +26,7 @@ public class BookIssueServiceImpl implements BookIssueService {
     private final ModelMapper modelMapper;
     private final BookDao bookDao;
     private final MemberDao memberDao;
+    private final MemberProfileDao memberProfileDao;
     private final IssuedItemDao issuedItemDao;
 
     @Override
@@ -34,6 +37,20 @@ public class BookIssueServiceImpl implements BookIssueService {
         Book book = bookDao.findById(bookId)
                 .orElseThrow(() -> new RuntimeException("Book does not exist"));
 
+        MemberProfile memberProfile = null;
+
+        try {
+            memberProfile = memberProfileDao.findByMember(member).get();
+        } catch (NoSuchElementException e) {
+            MemberProfile newMemberProfile = MemberProfile.builder()
+                    .memberProfileId(UUID.randomUUID().toString())
+                    .member(member)
+                    .issuedBooksList(new ArrayList<>())
+                    .build();
+
+            memberProfileDao.save(newMemberProfile);
+        }
+
         if(!book.isAvailable() || book.getCount() == 0) {
             log.info("Book is not available");
             return "Book is not available";
@@ -43,11 +60,12 @@ public class BookIssueServiceImpl implements BookIssueService {
 
         issuedItem.setIssuedItemId(UUID.randomUUID().toString());
         issuedItem.setBook(book);
-        issuedItem.setMemberProfile(member.getMemberProfile());
+        issuedItem.setMemberProfile(memberProfile);
         issuedItem.setIssuedAt(LocalDateTime.now());
         issuedItem.setExpiredAt(LocalDateTime.now().plusDays(7));
 
         IssuedItem savedIssuedItem = issuedItemDao.save(issuedItem);
+
         book.setCount(book.getCount() - 1);
         if(book.getCount() == 0) book.setAvailable(false);
 
@@ -63,7 +81,8 @@ public class BookIssueServiceImpl implements BookIssueService {
         Member member = memberDao.findById(memberId)
                 .orElseThrow(() -> new RuntimeException("No such member exists in records"));
 
-        MemberProfile memberProfile = member.getMemberProfile();
+        MemberProfile memberProfile = memberProfileDao.findByMember(member)
+                .orElseThrow(() -> new RuntimeException("No such member profile exists in records"));
 
         IssuedItem issuedItem = issuedItemDao.findByBookAndMemberProfile(book, memberProfile)
                 .orElseThrow(() -> new RuntimeException("No such book issue item exists in records"));
@@ -79,7 +98,10 @@ public class BookIssueServiceImpl implements BookIssueService {
         Member member = memberDao.findById(memberId)
                 .orElseThrow(() -> new RuntimeException("No such member exists in records"));
 
-        member.getMemberProfile().setIssuedBooksList(new ArrayList<>());
+        MemberProfile memberProfile = memberProfileDao.findByMember(member)
+                .orElseThrow(() -> new RuntimeException("No such member profile exists in records"));
+
+        memberProfile.setIssuedBooksList(new ArrayList<>());
         memberDao.save(member);
 
         return "member's issued books list cleared";

@@ -3,6 +3,7 @@ package com.example.librarysystem.entities;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -14,14 +15,13 @@ import java.util.List;
 @Table(name = "member_profiles")
 public class MemberProfile {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long memberProfileId;
+    private String memberProfileId;
 
     @OneToOne
-    @JoinColumn(name = "member_id", referencedColumnName = "memberId", nullable = false)
+    @JoinColumn(name = "member_id", nullable = false, unique = true)
     private Member member;
 
-    @OneToMany(mappedBy = "memberProfile", cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
-    private List<IssuedItem> issuedBooksList;
+    @OneToMany(mappedBy = "memberProfile", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    private List<IssuedItem> issuedBooksList = new ArrayList<>();
 
 }

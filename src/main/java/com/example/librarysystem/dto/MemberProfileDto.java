@@ -1,6 +1,8 @@
 package com.example.librarysystem.dto;
 
 import lombok.*;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -11,6 +13,6 @@ import java.util.List;
 public class MemberProfileDto {
     private Long memberProfileId;
     private MemberDto member;
-    private List<IssuedItemDto> issuedBookDtoList;
+    private List<IssuedItemDto> issuedBookDtoList = new ArrayList<>();
 
 }

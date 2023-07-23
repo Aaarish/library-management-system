@@ -16,12 +16,10 @@ public class IssuedItem {
     @Id
     private String issuedItemId;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "book_id", referencedColumnName = "bookId", nullable = false)
+    @OneToOne
     private Book book;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_profile_id", referencedColumnName = "memberProfileId", nullable = false)
     private MemberProfile memberProfile;
 
     private LocalDateTime issuedAt;

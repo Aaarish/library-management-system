@@ -11,6 +11,5 @@ public class MemberDto {
     private String memberId;
     private String memberName;
     private String memberContactNumber;
-    private MemberProfileDto memberProfileDto;
 
 }
