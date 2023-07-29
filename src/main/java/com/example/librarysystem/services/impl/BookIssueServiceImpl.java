@@ -91,7 +91,12 @@ public class BookIssueServiceImpl implements BookIssueService {
                 .orElseThrow(() -> new RuntimeException("No such book issue item exists in records"));
 
         memberProfile.getIssuedBooksList().remove(issuedItem);
-        memberDao.save(member);
+        book.setCount(book.getCount() + 1);
+
+        memberProfileDao.save(memberProfile);
+        bookDao.save(book);
+
+        issuedItemDao.delete(issuedItem);
 
         return "book removed from member's issued books list";
     }
@@ -105,7 +110,9 @@ public class BookIssueServiceImpl implements BookIssueService {
                 .orElseThrow(() -> new RuntimeException("No such member profile exists in records"));
 
         memberProfile.setIssuedBooksList(new ArrayList<>());
-        memberDao.save(member);
+        memberProfileDao.save(memberProfile);
+
+        // TODO: 7/30/2023 changes in logic to be done as similar to above method
 
         return "member's issued books list cleared";
     }
