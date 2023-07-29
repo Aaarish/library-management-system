@@ -1,8 +1,14 @@
 package com.example.librarysystem.entities;
 
+import com.example.librarysystem.enums.Role;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.util.Collection;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -11,13 +17,52 @@ import javax.persistence.*;
 @Builder
 @Entity
 @Table(name = "members")
-public class Member {
+public class Member implements UserDetails {
     @Id
     private String memberId;
     private String memberName;
     private String memberContactNumber;
+    private String email;
+    private String password;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
-    @Embedded
-    private Credentials memberCredentials;
+
+//    methods
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Set.of(new SimpleGrantedAuthority("ROLE_" + role.toString()));
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 
 }

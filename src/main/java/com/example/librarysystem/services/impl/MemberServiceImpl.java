@@ -3,10 +3,13 @@ package com.example.librarysystem.services.impl;
 import com.example.librarysystem.dao.MemberDao;
 import com.example.librarysystem.dto.MemberDto;
 import com.example.librarysystem.entities.Member;
-import com.example.librarysystem.entities.MemberProfile;
+import com.example.librarysystem.enums.Role;
 import com.example.librarysystem.services.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,11 +21,26 @@ import java.util.stream.Collectors;
 public class MemberServiceImpl implements MemberService {
     private final ModelMapper modelMapper;
     private final MemberDao memberDao;
+    private final PasswordEncoder passwordEncoder;
+
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return memberDao.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("No user exists with this username"));
+    }
+
 
     @Override
     public String addMember(MemberDto memberDto) {
-        Member member = modelMapper.map(memberDto, Member.class);
+        Member member = new Member();
+
         member.setMemberId(UUID.randomUUID().toString());
+        member.setMemberName(memberDto.getMemberName());
+        member.setMemberContactNumber(memberDto.getMemberContactNumber());
+        member.setEmail(memberDto.getEmail());
+        member.setPassword(passwordEncoder.encode(memberDto.getPassword()));
+        member.setRole(Role.REGULAR);
 
         Member savedMember = memberDao.save(member);
         return savedMember.getMemberId();
@@ -65,4 +83,5 @@ public class MemberServiceImpl implements MemberService {
                 .map(member -> modelMapper.map(member, MemberDto.class))
                 .collect(Collectors.toList());
     }
+
 }
