@@ -1,6 +1,7 @@
 package com.example.librarysystem.config;
 
 import com.example.librarysystem.auth.jwt.JwtAuthFilter;
+import com.example.librarysystem.enums.Role;
 import com.example.librarysystem.services.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -34,6 +35,9 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/auth/**").permitAll()
+                .antMatchers("/books/**").hasRole(Role.ADMIN.toString())
+                .antMatchers("/members/**").hasRole(Role.ADMIN.toString())
+                .antMatchers("/issue-book/**").hasAnyRole(Role.ADMIN.toString(), Role.REGULAR.toString())
                 .anyRequest().authenticated();
 
         return http.build();
