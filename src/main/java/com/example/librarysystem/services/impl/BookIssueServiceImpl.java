@@ -4,6 +4,7 @@ import com.example.librarysystem.dao.BookDao;
 import com.example.librarysystem.dao.IssuedItemDao;
 import com.example.librarysystem.dao.MemberDao;
 import com.example.librarysystem.dao.MemberProfileDao;
+import com.example.librarysystem.dto.BookDto;
 import com.example.librarysystem.entities.Book;
 import com.example.librarysystem.entities.IssuedItem;
 import com.example.librarysystem.entities.Member;
@@ -16,8 +17,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -106,4 +109,20 @@ public class BookIssueServiceImpl implements BookIssueService {
 
         return "member's issued books list cleared";
     }
+
+    @Override
+    public List<BookDto> listIssuedBooks(String memberId) {
+        Member member = memberDao.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("No member exists with this member_id"));
+
+        MemberProfile memberProfile = memberProfileDao.findByMember(member)
+                .orElseThrow(() -> new RuntimeException("No such member_profile exists"));
+
+        List<IssuedItem> issuedBooksList = memberProfile.getIssuedBooksList();
+
+        return issuedBooksList.stream()
+                .map(issuedItem -> modelMapper.map(issuedItem.getBook(), BookDto.class))
+                .collect(Collectors.toList());
+    }
+
 }
