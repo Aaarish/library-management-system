@@ -35,8 +35,7 @@ public class BookIssueServiceImpl implements BookIssueService {
     @Override
     public String issueBookToMember(String bookId, String memberId) {
         Member member = memberDao.findById(memberId)
-                .orElseThrow(() -> new RuntimeException("Member is not registered"));
-
+                .orElseThrow(() -> new RuntimeException("Member is not registered !!!"));
         Book book = bookDao.findById(bookId)
                 .orElseThrow(() -> new RuntimeException("Book does not exist"));
 
@@ -57,6 +56,12 @@ public class BookIssueServiceImpl implements BookIssueService {
         if(!book.isAvailable() || book.getCount() == 0) {
             log.info("Book is not available");
             return "Book is not available";
+        }
+
+        for(IssuedItem issuedItem : memberProfile.getIssuedBooksList()) {
+            if(issuedItem.getBook().getBookId().equals(bookId)) {
+                return "This book is already issued to this member";
+            }
         }
 
         IssuedItem issuedItem = new IssuedItem();
