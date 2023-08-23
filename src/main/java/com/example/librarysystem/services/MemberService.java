@@ -11,6 +11,7 @@ public interface MemberService extends UserDetailsService {
     String removeMember(String memberId);
     String updateMember(String memberId, MemberDto memberDto);
     MemberDto getMember(String memberId);
+    MemberDto getMemberByEmail(String email);
     List<MemberDto> getMembers();
 
 }

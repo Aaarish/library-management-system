@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -72,6 +73,13 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberDao.findById(memberId)
                 .orElseThrow(() -> new RuntimeException("No member with such id exists"));
 
+        return modelMapper.map(member, MemberDto.class);
+    }
+
+    @Override
+    public MemberDto getMemberByEmail(String email) {
+        Member member = memberDao.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("No such user found"));
         return modelMapper.map(member, MemberDto.class);
     }
 
