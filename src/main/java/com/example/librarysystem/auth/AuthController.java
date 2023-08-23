@@ -2,14 +2,13 @@ package com.example.librarysystem.auth;
 
 import com.example.librarysystem.auth.requests.AuthRequest;
 import com.example.librarysystem.auth.requests.RegisterRequest;
+import com.example.librarysystem.auth.requests.ResetPasswordRequest;
 import com.example.librarysystem.auth.responses.AuthResponse;
+import com.example.librarysystem.auth.responses.ResetPasswordResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -25,6 +24,11 @@ public class AuthController {
     @PostMapping("/signin")
     public ResponseEntity<AuthResponse> signin(@RequestBody AuthRequest authRequest) {
         return ResponseEntity.status(HttpStatus.CREATED).body(authService.authenticate(authRequest));
+    }
+
+    @PutMapping("/reset_password")
+    public ResponseEntity<ResetPasswordResponse> resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) {
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(authService.resetPassword(resetPasswordRequest));
     }
 
 }

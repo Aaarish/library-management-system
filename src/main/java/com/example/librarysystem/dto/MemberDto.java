@@ -1,6 +1,7 @@
 package com.example.librarysystem.dto;
 
 import com.example.librarysystem.enums.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 
@@ -16,5 +17,7 @@ public class MemberDto {
     private String email;
     private String password;
     private Role role;
+    @JsonIgnore
+    private boolean isEnabled;
 
 }

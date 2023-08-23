@@ -5,7 +5,10 @@ import com.example.librarysystem.auth.otp.OTPDao;
 import com.example.librarysystem.auth.otp.OTPEntity;
 import com.example.librarysystem.auth.requests.AuthRequest;
 import com.example.librarysystem.auth.requests.RegisterRequest;
+import com.example.librarysystem.auth.requests.ResetPasswordRequest;
 import com.example.librarysystem.auth.responses.AuthResponse;
+import com.example.librarysystem.auth.responses.ResetPasswordResponse;
+import com.example.librarysystem.dao.MemberDao;
 import com.example.librarysystem.dto.MemberDto;
 import com.example.librarysystem.entities.Member;
 import com.example.librarysystem.services.MemberService;
@@ -16,8 +19,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -26,6 +31,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
+    private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final MemberService memberService;
     private final ModelMapper modelMapper;
@@ -42,12 +48,20 @@ public class AuthServiceImpl implements AuthService {
         //verify member before completing the registration
         OTPEntity savedOtp = otpDao.save(new OTPEntity(member));
 
+        try {
+            Thread.sleep(3000);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         if(!verifyOTP(savedOtp.getOtp())) {
             log.info("{} is not verified !", member.getEmail());
             throw new RuntimeException("Member cannot be verified!\tPlease try again!");
         }
 
         log.info("{} is verified successfully !!!", member.getEmail());
+        member.setEnabled(true);
+        memberService.updateMember(memberId, modelMapper.map(member, MemberDto.class));
         otpDao.delete(savedOtp);
 
         String token = jwtUtil.generateToken(member);
@@ -91,5 +105,10 @@ public class AuthServiceImpl implements AuthService {
                 .jwt(token)
                 .message("User authenticated successfully !!!")
                 .build();
+    }
+
+    @Override
+    public ResetPasswordResponse resetPassword(ResetPasswordRequest resetPasswordRequest) {
+        return null;
     }
 }

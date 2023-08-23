@@ -63,6 +63,7 @@ public class MemberServiceImpl implements MemberService {
 
         if(memberDto.getMemberName() != null) member.setMemberName(memberDto.getMemberName());
         if(memberDto.getMemberContactNumber() != null) member.setMemberContactNumber(memberDto.getMemberContactNumber());
+        member.setEnabled(memberDto.isEnabled());
 
         Member updatedMember = memberDao.save(member);
         return updatedMember.getMemberId();

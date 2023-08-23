@@ -29,6 +29,8 @@ public class Member implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    private boolean isEnabled;
+
 
 //    methods
 
@@ -64,7 +66,7 @@ public class Member implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return isEnabled;
     }
 
 }
