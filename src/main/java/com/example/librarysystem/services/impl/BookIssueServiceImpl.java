@@ -5,6 +5,7 @@ import com.example.librarysystem.dao.IssuedItemDao;
 import com.example.librarysystem.dao.MemberDao;
 import com.example.librarysystem.dao.MemberProfileDao;
 import com.example.librarysystem.dto.BookDto;
+import com.example.librarysystem.dto.ChangePasswordRequest;
 import com.example.librarysystem.entities.Book;
 import com.example.librarysystem.entities.IssuedItem;
 import com.example.librarysystem.entities.Member;
@@ -13,6 +14,7 @@ import com.example.librarysystem.services.BookIssueService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -31,6 +33,7 @@ public class BookIssueServiceImpl implements BookIssueService {
     private final MemberDao memberDao;
     private final MemberProfileDao memberProfileDao;
     private final IssuedItemDao issuedItemDao;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public String issueBookToMember(String bookId, String memberId) {

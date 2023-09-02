@@ -4,11 +4,11 @@ import com.example.librarysystem.auth.requests.AuthRequest;
 import com.example.librarysystem.auth.requests.RegisterRequest;
 import com.example.librarysystem.auth.requests.ResetPasswordRequest;
 import com.example.librarysystem.auth.responses.AuthResponse;
-import com.example.librarysystem.auth.responses.ResetPasswordResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 
 @RestController
 @RequestMapping("/auth")
@@ -27,7 +27,7 @@ public class AuthController {
     }
 
     @PutMapping("/reset_password")
-    public ResponseEntity<ResetPasswordResponse> resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) {
+    public ResponseEntity<String> resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(authService.resetPassword(resetPasswordRequest));
     }
 

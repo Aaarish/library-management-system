@@ -40,4 +40,10 @@ public class MemberController {
     public ResponseEntity<List<MemberDto>> getMembers() {
         return ResponseEntity.status(HttpStatus.OK).body(memberService.getMembers());
     }
+
+    @PutMapping("/member/{memberId}/changePassword")
+    public ResponseEntity<String> changePassword(@PathVariable String memberId, @RequestParam String newPassword) {
+        return ResponseEntity.status(HttpStatus.OK).body(memberService.changePassword(memberId, newPassword));
+    }
+
 }

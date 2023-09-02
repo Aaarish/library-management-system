@@ -13,5 +13,6 @@ public interface MemberService extends UserDetailsService {
     MemberDto getMember(String memberId);
     MemberDto getMemberByEmail(String email);
     List<MemberDto> getMembers();
+    String changePassword(String memberId, String newPassword);
 
 }

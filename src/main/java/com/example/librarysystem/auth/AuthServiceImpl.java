@@ -7,8 +7,6 @@ import com.example.librarysystem.auth.requests.AuthRequest;
 import com.example.librarysystem.auth.requests.RegisterRequest;
 import com.example.librarysystem.auth.requests.ResetPasswordRequest;
 import com.example.librarysystem.auth.responses.AuthResponse;
-import com.example.librarysystem.auth.responses.ResetPasswordResponse;
-import com.example.librarysystem.dao.MemberDao;
 import com.example.librarysystem.dto.MemberDto;
 import com.example.librarysystem.entities.Member;
 import com.example.librarysystem.services.MemberService;
@@ -22,7 +20,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -108,7 +105,13 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public ResetPasswordResponse resetPassword(ResetPasswordRequest resetPasswordRequest) {
-        return null;
+    public String resetPassword(ResetPasswordRequest resetPasswordRequest) {
+        MemberDto memberDto = memberService.getMemberByEmail(resetPasswordRequest.getEmail());
+        Member member = modelMapper.map(memberDto, Member.class);
+
+        member.setPassword(passwordEncoder.encode(resetPasswordRequest.getNewPassword()));
+        memberService.updateMember(member.getMemberId(), modelMapper.map(member, MemberDto.class));
+
+        return "Password reset successfully !!!";
     }
 }
